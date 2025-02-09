@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router';
 import { useState } from 'react';
 import axios from "axios";
 import {addPolicy} from "@/localStorageService";
+import { IApiE2E } from '@/integration/iapie2e';
 
 export const formSchema = z.object({
     startDate: z.date(),
@@ -48,6 +49,8 @@ export const PolicyBuilder = () => {
 
     const [showSecondStep, setShowSecondStep] = useState(false);
     const [isSending, setIsSending] = useState(false);
+
+    const api = new IApiE2E();
 
     const selectedOptions = form.getValues('insuranceOptions');
 
@@ -89,12 +92,11 @@ export const PolicyBuilder = () => {
         }
     }
     const handleClickNewPolicy = () => {
-        axios.get("/response.json")
-            .then(response => {
-                const policy = randomizeData(mapData(response.data));
-                // @ts-expect-error
-                addPolicy(policy)
-            });
+        api.createPolicy().then((response) => {
+            const policy = randomizeData(mapData(response));
+            // @ts-expect-error
+            addPolicy(policy)
+        });
     }
     const randomizeData = (apiData: any) => {
         return {

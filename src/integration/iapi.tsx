@@ -1,21 +1,21 @@
 import axios from "axios";
 
 export class IApiIntegration {
-    private readonly baseUrl: string = import.meta.env.IAPI_BASE_URL || "";
-    private readonly realm: string = import.meta.env.IAPI_REALM || "";
+    private readonly baseUrl: string = import.meta.env.VITE_IAPI_BASE_URL || '';
+    private readonly realm: string = import.meta.env.VITE_IAPI_REALM || '';
 
     /*
     * POST 1 - IAPI generate-token
     **/
     async getToken(clientId: string, clientSecret: string, grantType: string, externalUserId: string): Promise<string> {
         const response = await axios.post(`${this.baseUrl}/api/v3/realms/${this.realm}/token`, {
-            client_id: clientId,
-            client_secret: clientSecret,
-            grant_type: grantType,
-            external_user_id: externalUserId,
+            clientId: clientId,
+            clientSecret: clientSecret,
+            grantType: grantType,
+            externalUserId: externalUserId,
         });
-        const responseData = response.data as { access_token: string };
-        return responseData.access_token;
+        const responseData = response.data as { accessToken: string };
+        return responseData.accessToken;
     }
 
     /*
@@ -35,7 +35,7 @@ export class IApiIntegration {
     /*
     * POST 3 - IAPI post CEPiK
     **/
-    async registerToCepik(token: string, credentialsId: string, registrationNumber: string, insurerBrandNameList: string, pesel: string, startDate: string): Promise<string> {
+    async registerToCepik(token: string, credentialsId: string, registrationNumber: string, insurerBrandNameList: string[], pesel: string, startDate: string): Promise<string> {
         const response = await axios.post(`${this.baseUrl}/api/v3/moto/cepik`, {
             registrationNumber,
             insurerBrandNameList,
@@ -70,7 +70,7 @@ export class IApiIntegration {
     /*
     * POST 4 - IAPI post calculations
     **/
-    async calculatePrice(token: string, credentialsId: string, calculationRequest: any): Promise<any> {
+    async calculatePriceMoto(token: string, credentialsId: string, calculationRequest: any): Promise<any> {
         const response = await axios.post(`${this.baseUrl}/api/v3/moto/calculations`, calculationRequest, {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -180,6 +180,5 @@ export class IApiIntegration {
         });
         return response.data;
     }
-
 }
 
